@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ramadan 2027 Timetable · Auto-Fill · MagicDigiStudio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Jost:wght@400;500;600&family=Marcellus&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1E2A45;--gold:#C59B4B;--cream:#F8F2E7;--sand:#EFE4D0;--line:#E2D6BF;--muted:#8C8572;--fill:#F1E6CF}
+*{box-sizing:border-box}
+body{margin:0;font-family:Jost,Arial,sans-serif;color:var(--navy);background:#EDE6D8}
+[dir=rtl] body,[dir=rtl] *{font-family:Amiri,Jost,serif;letter-spacing:0!important}
+.panel{max-width:980px;margin:24px auto;background:var(--navy);color:var(--cream);border-radius:18px;padding:22px 26px;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+.panel h1{font-family:Marcellus,serif;font-weight:400;margin:0 0 4px;font-size:28px}
+.panel p{margin:0 0 16px;opacity:.85;font-size:14px;line-height:1.5}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+label{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;font-weight:600}
+input,select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #3B4A70;background:#26355A;color:#fff;font-size:15px;font-family:inherit}
+.btns{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+button{border:0;border-radius:30px;padding:11px 22px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.go{background:var(--gold);color:var(--navy)} .pr{background:var(--cream);color:var(--navy)}
+#msg{margin-top:12px;font-size:14px;min-height:20px;color:#F6D88B}
+.sheet{width:8.5in;min-height:11in;margin:0 auto 40px;background:var(--cream);padding:.5in .55in;box-shadow:0 10px 30px rgba(0,0,0,.12);position:relative}
+.sheet.a4{width:210mm;min-height:297mm}
+.kick{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.sheet h2{font-family:Marcellus,serif;font-weight:400;font-size:28px;margin:4px 0 2px}
+.sub{font-size:11px;color:var(--muted);font-style:italic;margin-bottom:12px}
+table{width:100%;border-collapse:collapse}
+th{background:var(--navy);color:var(--cream);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;padding:6px 5px;font-weight:600}
+td{border-bottom:1px solid var(--line);height:24px;font-size:12px;text-align:center;padding:0 5px}
+td.t{font-family:Marcellus,serif;font-size:14px}
+td.d{font-family:Marcellus,serif;color:var(--gold);font-size:13px}
+tr.ten td{background:var(--fill)}
+.circle{display:inline-block;width:12px;height:12px;border:1.3px solid var(--navy);border-radius:50%}
+.note{font-size:9.5px;color:var(--muted);margin-top:8px;line-height:1.45}
+.moon{position:absolute;top:.45in;inset-inline-end:.55in;width:46px;height:46px}
+.foot{position:absolute;bottom:.3in;left:0;right:0;text-align:center;font-size:8px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase}
+@media print{
+  body{background:#fff} .panel{display:none} .sheet{box-shadow:none;margin:0}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+@media screen and (max-width:760px){.grid{grid-template-columns:1fr 1fr}.sheet{width:100%;min-height:auto;padding:16px}.sheet table th:nth-child(n+7),.sheet table td:nth-child(n+7){display:none}.sheet td.t{white-space:nowrap}.sheet td:nth-child(2){white-space:nowrap}.sheet h2{font-size:26px;padding-inline-end:52px}.sheet .moon{width:40px;height:40px;top:16px;inset-inline-end:16px}.sheet th,.sheet td{padding-left:3px;padding-right:3px}}
+</style>
+<style id="pagesize">@page{size:letter;margin:0}</style>
+</head>
+<body>
+<div class="panel">
+  <h1 data-t="title">Your Ramadan 2027 timetable</h1>
+  <p data-t="intro">Enter your city and country. The Sahur and Iftar times for all of Ramadan are filled in automatically. Then print or save as PDF.</p>
+  <div class="grid">
+    <div><label data-t="lang">Language</label><select id="lang"></select></div>
+    <div><label data-t="city">City</label><input id="city" placeholder="Berlin"></div>
+    <div><label data-t="country">Country</label><input id="country" placeholder="Germany"></div>
+    <div><label data-t="method">Calculation method</label><select id="method"></select></div>
+    <div><label data-t="sahur">Sahur ends at</label><select id="sahur"><option value="Fajr" data-t="fajr">Fajr</option><option value="Imsak" data-t="imsak">Imsak (≈10 min before Fajr)</option></select></div>
+    <div><label data-t="start">Start of Ramadan</label><select id="adj"><option value="-1" data-t="adjm">1 day earlier</option><option value="0" selected data-t="adj0">As calculated</option><option value="1" data-t="adjp">1 day later</option></select></div>
+    <div><label data-t="fmt">Time format</label><select id="fmt"><option value="24">24h</option><option value="12">12h (AM/PM)</option></select></div>
+    <div><label data-t="paper">Paper</label><select id="paper"><option value="letter">US Letter</option><option value="a4">A4</option></select></div>
+  </div>
+  <div class="btns"><button class="go" id="go" data-t="create">Create my timetable</button><button class="pr" id="pr" data-t="print">Print / save as PDF</button></div>
+  <div id="msg"></div>
+</div>
+<div id="out"></div>
+
+<script>
+const METHODS = [[3,"Muslim World League"],[2,"ISNA (North America)"],[13,"Diyanet (Turkey)"],[4,"Umm al-Qura (Makkah)"],[5,"Egyptian General Authority"],[1,"Karachi (Univ. of Islamic Sciences)"],
+ [12,"UOIF (France)"],[20,"Kemenag (Indonesia)"],[17,"JAKIM (Malaysia)"],[11,"MUIS (Singapore)"],[16,"Dubai"],[8,"Gulf Region"],[9,"Kuwait"],[10,"Qatar"],[21,"Morocco"],[19,"Algeria"],[18,"Tunisia"],
+ [23,"Jordan"],[14,"Russia"],[22,"Lisbon"],[15,"Moonsighting Committee"],[7,"Tehran"]];
+const BYCOUNTRY = {"united states":2,"usa":2,"us":2,"canada":2,"turkey":13,"türkiye":13,"turkiye":13,"saudi arabia":4,"egypt":5,"pakistan":1,"india":1,"bangladesh":1,"afghanistan":1,
+ "france":12,"indonesia":20,"malaysia":17,"singapore":11,"united arab emirates":16,"uae":16,"qatar":10,"kuwait":9,"morocco":21,"algeria":19,"tunisia":18,"jordan":23,"russia":14,"portugal":22,"iran":7};
+const L = {
+ en:{title:"Your Ramadan 2027 timetable",intro:"Enter your city and country. The Sahur and Iftar times for all of Ramadan are filled in automatically. Then print or save as PDF.",lang:"Language",city:"City",country:"Country",method:"Calculation method",sahur:"Sahur ends at",fajr:"Fajr",imsak:"Imsak (≈10 min before Fajr)",start:"Start of Ramadan",adjm:"1 day earlier",adj0:"As calculated",adjp:"1 day later",fmt:"Time format",paper:"Paper",create:"Create my timetable",print:"Print / save as PDF",loading:"Loading times…",err:"Sorry, the times could not be loaded. Please check the city and country spelling and your internet connection.",need:"Please enter a city and a country.",
+   h:"My Ramadan timetable",k:"Ramadan 2027 · 1448 AH · Sahur & Iftar",day:"Day",date:"Date",wd:"Weekday",se:"Sahur ends",if:"Iftar",fa:"Fasted",host:"We host for iftar",inv:"Invited to iftar at",d30:"Day 30 – only if Ramadan completes 30 days, otherwise Eid al-Fitr",
+   note:"Times: AlAdhan.com (Islamic Network), method: {m}. Calculated times can differ by a few minutes from your local mosque. Please follow your mosque or community, especially for the start of Ramadan and Eid.",ten:"Highlighted: the last ten nights"},
+ de:{title:"Dein Ramadan-Zeitplan 2027",intro:"Gib deine Stadt und dein Land ein. Die Sahur- und Iftar-Zeiten für den ganzen Ramadan werden automatisch eingetragen. Danach drucken oder als PDF speichern.",lang:"Sprache",city:"Stadt",country:"Land",method:"Berechnungsmethode",sahur:"Sahur endet um",fajr:"Fadschr",imsak:"Imsak (≈10 Min. vor Fadschr)",start:"Ramadan-Beginn",adjm:"1 Tag früher",adj0:"Wie berechnet",adjp:"1 Tag später",fmt:"Zeitformat",paper:"Papier",create:"Zeitplan erstellen",print:"Drucken / als PDF speichern",loading:"Zeiten werden geladen …",err:"Die Zeiten konnten nicht geladen werden. Bitte prüfe die Schreibweise von Stadt und Land und deine Internetverbindung.",need:"Bitte Stadt und Land eingeben.",
+   h:"Mein Ramadan-Zeitplan",k:"Ramadan 2027 · 1448 n. H. · Sahur & Iftar",day:"Tag",date:"Datum",wd:"Wochentag",se:"Sahur endet",if:"Iftar",fa:"Gefastet",host:"Wir laden zum Iftar ein",inv:"Eingeladen zum Iftar bei",d30:"Tag 30 – nur wenn der Ramadan 30 Tage hat, sonst Ramadanfest",
+   note:"Zeiten: AlAdhan.com (Islamic Network), Methode: {m}. Berechnete Zeiten können um einige Minuten von deiner Moschee abweichen. Richte dich nach deiner Moschee oder Gemeinde, besonders beim Beginn des Ramadan und beim Fest.",ten:"Markiert: die letzten zehn Nächte"},
+ tr:{title:"2027 Ramazan imsakiyen",intro:"Şehrini ve ülkeni yaz. Ramazan boyunca sahur ve iftar vakitleri otomatik doldurulur. Sonra yazdır veya PDF olarak kaydet.",lang:"Dil",city:"Şehir",country:"Ülke",method:"Hesaplama yöntemi",sahur:"Sahur bitişi",fajr:"Sabah (imsak)",imsak:"İhtiyatlı imsak (≈10 dk önce)",start:"Ramazan başlangıcı",adjm:"1 gün önce",adj0:"Hesaplandığı gibi",adjp:"1 gün sonra",fmt:"Saat biçimi",paper:"Kâğıt",create:"İmsakiyemi oluştur",print:"Yazdır / PDF kaydet",loading:"Vakitler yükleniyor…",err:"Vakitler yüklenemedi. Lütfen şehir ve ülke yazımını ve internet bağlantını kontrol et.",need:"Lütfen şehir ve ülke gir.",
+   h:"Ramazan imsakiyem",k:"Ramazan 2027 · 1448 H. · Sahur & İftar",day:"Gün",date:"Tarih",wd:"Gün adı",se:"İmsak",if:"İftar",fa:"Oruç",host:"Bizim iftar misafirlerimiz",inv:"İftara davetliyiz",d30:"30. gün – yalnızca Ramazan 30 gün sürerse, aksi halde bayram",
+   note:"Vakitler: AlAdhan.com (Islamic Network), yöntem: {m}. Hesaplanan vakitler caminizden birkaç dakika farklı olabilir. Özellikle Ramazan'ın başlangıcı ve bayram için caminize veya cemaatinize uyun.",ten:"İşaretli: son on gece"},
+ ar:{title:"جدول رمضان 2027 الخاص بك",intro:"اكتب مدينتك وبلدك، وستُملأ أوقات السحور والإفطار لكل رمضان تلقائيًا. ثم اطبع أو احفظ كملف PDF.",lang:"اللغة",city:"المدينة",country:"البلد",method:"طريقة الحساب",sahur:"نهاية السحور",fajr:"الفجر",imsak:"الإمساك (قبل الفجر بنحو 10 دقائق)",start:"بداية رمضان",adjm:"قبل يوم",adj0:"كما هو محسوب",adjp:"بعد يوم",fmt:"صيغة الوقت",paper:"الورق",create:"أنشئ جدولي",print:"اطبع / احفظ PDF",loading:"جارٍ تحميل الأوقات…",err:"تعذر تحميل الأوقات. تحقق من كتابة المدينة والبلد ومن اتصال الإنترنت.",need:"يرجى إدخال المدينة والبلد.",
+   h:"جدول رمضان الخاص بي",k:"رمضان 2027 · 1448 هـ · السحور والإفطار",day:"اليوم",date:"التاريخ",wd:"يوم الأسبوع",se:"نهاية السحور",if:"الإفطار",fa:"صمت",host:"نستضيف على الإفطار",inv:"مدعوون للإفطار عند",d30:"اليوم 30 – فقط إذا اكتمل رمضان ثلاثين يومًا، وإلا فهو عيد الفطر",
+   note:"الأوقات من AlAdhan.com (Islamic Network)، الطريقة: {m}. قد تختلف الأوقات المحسوبة ببضع دقائق عن مسجدك. اتبع مسجدك أو جاليتك، خاصة في بداية رمضان والعيد.",ten:"المظلل: العشر الأواخر"},
+ fr:{title:"Votre calendrier du Ramadan 2027",intro:"Saisissez votre ville et votre pays. Les horaires du suhour et de l'iftar pour tout le Ramadan sont remplis automatiquement. Ensuite, imprimez ou enregistrez en PDF.",lang:"Langue",city:"Ville",country:"Pays",method:"Méthode de calcul",sahur:"Fin du suhour",fajr:"Fajr",imsak:"Imsak (≈10 min avant le Fajr)",start:"Début du Ramadan",adjm:"1 jour plus tôt",adj0:"Selon le calcul",adjp:"1 jour plus tard",fmt:"Format de l'heure",paper:"Papier",create:"Créer mon calendrier",print:"Imprimer / enregistrer en PDF",loading:"Chargement des horaires…",err:"Les horaires n'ont pas pu être chargés. Vérifiez l'orthographe de la ville et du pays ainsi que votre connexion internet.",need:"Veuillez saisir une ville et un pays.",
+   h:"Mon calendrier du Ramadan",k:"Ramadan 2027 · 1448 H · Suhour & Iftar",day:"Jour",date:"Date",wd:"Jour",se:"Fin du suhour",if:"Iftar",fa:"Jeûné",host:"Nous recevons pour l'iftar",inv:"Invités à l'iftar chez",d30:"Jour 30 – uniquement si le Ramadan compte 30 jours, sinon Aïd al-Fitr",
+   note:"Horaires : AlAdhan.com (Islamic Network), méthode : {m}. Les horaires calculés peuvent différer de quelques minutes de votre mosquée. Suivez votre mosquée ou communauté, surtout pour le début du Ramadan et l'Aïd.",ten:"En surbrillance : les dix dernières nuits"},
+ ur:{title:"آپ کا رمضان 2027 ٹائم ٹیبل",intro:"اپنا شہر اور ملک لکھیں۔ پورے رمضان کے سحری اور افطار کے اوقات خود بخود درج ہو جائیں گے۔ پھر پرنٹ کریں یا پی ڈی ایف محفوظ کریں۔",lang:"زبان",city:"شہر",country:"ملک",method:"طریقۂ حساب",sahur:"سحری کا اختتام",fajr:"فجر",imsak:"امساک (فجر سے تقریباً 10 منٹ پہلے)",start:"رمضان کا آغاز",adjm:"ایک دن پہلے",adj0:"حساب کے مطابق",adjp:"ایک دن بعد",fmt:"وقت کا انداز",paper:"کاغذ",create:"میرا ٹائم ٹیبل بنائیں",print:"پرنٹ / پی ڈی ایف",loading:"اوقات لوڈ ہو رہے ہیں…",err:"اوقات لوڈ نہیں ہو سکے۔ شہر اور ملک کے ہجے اور انٹرنیٹ کنکشن چیک کریں۔",need:"براہ کرم شہر اور ملک درج کریں۔",
+   h:"میرا رمضان ٹائم ٹیبل",k:"رمضان 2027 · 1448 ہجری · سحری و افطار",day:"روزہ",date:"تاریخ",wd:"دن",se:"سحری کا اختتام",if:"افطار",fa:"روزہ رکھا",host:"ہماری افطاری کے مہمان",inv:"افطاری کی دعوت پر",d30:"تیسواں روزہ – صرف اگر رمضان 30 دن کا ہو، ورنہ عید الفطر",
+   note:"اوقات: AlAdhan.com (Islamic Network)، طریقہ: {m}۔ حساب شدہ اوقات آپ کی مسجد سے چند منٹ مختلف ہو سکتے ہیں۔ خاص طور پر رمضان کے آغاز اور عید کے لیے اپنی مسجد یا جماعت کی پیروی کریں۔",ten:"نمایاں: آخری عشرہ"},
+ id:{title:"Jadwal Ramadan 2027 Anda",intro:"Masukkan kota dan negara Anda. Waktu sahur dan buka puasa untuk seluruh Ramadan terisi otomatis. Lalu cetak atau simpan sebagai PDF.",lang:"Bahasa",city:"Kota",country:"Negara",method:"Metode perhitungan",sahur:"Akhir sahur",fajr:"Subuh",imsak:"Imsak (≈10 menit sebelum Subuh)",start:"Awal Ramadan",adjm:"1 hari lebih awal",adj0:"Sesuai perhitungan",adjp:"1 hari lebih lambat",fmt:"Format waktu",paper:"Kertas",create:"Buat jadwal saya",print:"Cetak / simpan PDF",loading:"Memuat jadwal…",err:"Jadwal tidak dapat dimuat. Periksa ejaan kota dan negara serta koneksi internet Anda.",need:"Silakan masukkan kota dan negara.",
+   h:"Jadwal Ramadan saya",k:"Ramadan 2027 · 1448 H · Sahur & Buka Puasa",day:"Hari",date:"Tanggal",wd:"Hari",se:"Imsak",if:"Buka puasa",fa:"Puasa",host:"Kami mengundang buka puasa",inv:"Diundang buka puasa di",d30:"Hari ke-30 – hanya jika Ramadan genap 30 hari, jika tidak Idul Fitri",
+   note:"Waktu: AlAdhan.com (Islamic Network), metode: {m}. Waktu hasil perhitungan bisa berbeda beberapa menit dari masjid setempat. Ikuti masjid atau komunitas Anda, terutama untuk awal Ramadan dan Idul Fitri.",ten:"Ditandai: sepuluh malam terakhir"}
+};
+const NAMES = {en:"English",de:"Deutsch",tr:"Türkçe",ar:"العربية",fr:"Français",ur:"اردو",id:"Bahasa Indonesia"};
+const LOC = {en:"en-US",de:"de-DE",tr:"tr-TR",ar:"ar",fr:"fr-FR",ur:"ur-PK",id:"id-ID"};
+const $ = id => document.getElementById(id);
+let cur = "en";
+function store(k, v){ try{ localStorage.setItem("rmd_" + k, v); }catch(e){} }
+function load(k){ try{ return localStorage.getItem("rmd_" + k); }catch(e){ return null; } }
+
+function applyLang(){
+  const t = L[cur]; document.documentElement.lang = cur; document.documentElement.dir = (cur === "ar" || cur === "ur") ? "rtl" : "ltr";
+  document.querySelectorAll("[data-t]").forEach(el => { if (t[el.dataset.t]) el.textContent = t[el.dataset.t]; });
+  store("lang", cur);
+}
+function init(){
+  Object.entries(NAMES).forEach(([k, v]) => $("lang").add(new Option(v, k)));
+  METHODS.forEach(([id, n]) => $("method").add(new Option(n, id)));
+  const nav = (navigator.language || "en").slice(0, 2);
+  cur = load("lang") || (L[nav] ? nav : "en"); $("lang").value = cur;
+  ["city", "country", "method", "sahur", "fmt", "paper", "adj"].forEach(k => { const v = load(k); if (v !== null) $(k).value = v; });
+  let fmtTouched = load("fmt") !== null;
+  if (!fmtTouched) $("fmt").value = cur === "en" ? "12" : "24";
+  $("fmt").onchange = () => { fmtTouched = true; };
+  applyLang();
+  $("lang").onchange = () => { cur = $("lang").value; if (!fmtTouched) $("fmt").value = cur === "en" ? "12" : "24"; applyLang(); if ($("out").innerHTML) $("go").click(); };
+  $("country").onchange = () => { const m = BYCOUNTRY[$("country").value.trim().toLowerCase()]; if (m) $("method").value = m; };
+  $("paper").onchange = () => { $("pagesize").textContent = `@page{size:${$("paper").value};margin:0}`; document.querySelectorAll(".sheet").forEach(s => s.classList.toggle("a4", $("paper").value === "a4")); };
+  $("go").onclick = create; $("pr").onclick = () => window.print();
+  $("paper").onchange();
+}
+function fmtTime(s){
+  const hm = s.slice(0, 5); if ($("fmt").value === "24") return hm;
+  let [h, m] = hm.split(":").map(Number); const ap = h < 12 ? "AM" : "PM"; h = h % 12 || 12; return `${h}:${String(m).padStart(2, "0")} ${ap}`;
+}
+async function create(){
+  const t = L[cur], city = $("city").value.trim(), country = $("country").value.trim();
+  if (!city || !country){ $("msg").textContent = t.need; return; }
+  ["city", "country", "method", "sahur", "fmt", "paper", "adj"].forEach(k => store(k, $(k).value));
+  $("msg").textContent = t.loading;
+  try{
+    const url = `https://api.aladhan.com/v1/hijriCalendarByAddress/1448/9?address=${encodeURIComponent(city + ", " + country)}&method=${$("method").value}&adjustment=${$("adj").value}`;
+    const r = await fetch(url); const j = await r.json(); if (j.code !== 200 || !j.data || !j.data.length) throw new Error("bad");
+    render(j.data, city, country); $("msg").textContent = "";
+  }catch(e){ $("msg").textContent = t.err; }
+}
+function render(days, city, country){
+  const t = L[cur], key = $("sahur").value, mname = $("method").selectedOptions[0].text;
+  let rows = "";
+  for (let i = 0; i < 30; i++){
+    const d = days[i];
+    if (d){
+      const g = d.date.gregorian, dt = new Date(+g.year, g.month.number - 1, +g.day);
+      const date = dt.toLocaleDateString(LOC[cur], {day: "numeric", month: "short"}), wd = dt.toLocaleDateString(LOC[cur], {weekday: "short"});
+      rows += `<tr class="${i >= 20 ? "ten" : ""}"><td class="d">${i + 1}</td><td>${date}</td><td>${wd}</td><td class="t">${fmtTime(d.timings[key])}</td><td class="t">${fmtTime(d.timings.Maghrib)}</td><td><span class="circle"></span></td><td></td><td></td></tr>`;
+    } else {
+      rows += `<tr class="ten"><td class="d">30*</td><td></td><td></td><td></td><td></td><td><span class="circle"></span></td><td></td><td></td></tr>`;
+    }
+  }
+  const a4 = $("paper").value === "a4" ? "a4" : "";
+  $("out").innerHTML = `<div class="sheet ${a4}">
+    <svg class="moon" viewBox="0 0 100 100"><path d="M62 8a44 44 0 1 0 30 70A36 36 0 1 1 62 8z" fill="#C59B4B"/><path d="M74 23 L77 31 L85 31 L79 36 L81 44 L74 39 L67 44 L69 36 L63 31 L71 31Z" fill="#C59B4B"/></svg>
+    <div class="kick">${t.k}</div><h2>${t.h}</h2><div class="sub">${city}, ${country} · ${mname}</div>
+    <table><tr><th>${t.day}</th><th>${t.date}</th><th>${t.wd}</th><th>${t.se}</th><th>${t.if}</th><th>${t.fa}</th><th style="width:22%">${t.host}</th><th style="width:22%">${t.inv}</th></tr>${rows}</table>
+    <div class="note">${t.ten} · * ${t.d30}</div><div class="note">${t.note.replace("{m}", mname)}</div>
+    <div class="foot">Ramadan 2027 · MagicDigiStudio</div></div>`;
+}
+init();
+</script>
+</body>
+</html>
