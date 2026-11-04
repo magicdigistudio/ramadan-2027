@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ramadan 2027 Timetable · Auto-Fill · MagicDigiStudio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Jost:wght@400;500;600&family=Marcellus&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Jost:wght@400;500;600&family=Marcellus&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 :root{--navy:#1E2A45;--gold:#C59B4B;--cream:#F8F2E7;--sand:#EFE4D0;--line:#E2D6BF;--muted:#8C8572;--fill:#F1E6CF}
 *{box-sizing:border-box}
@@ -36,11 +36,26 @@ tr.ten td{background:var(--fill)}
 .note{font-size:9.5px;color:var(--muted);margin-top:8px;line-height:1.45}
 .moon{position:absolute;top:.45in;inset-inline-end:.55in;width:46px;height:46px}
 .foot{position:absolute;bottom:.3in;left:0;right:0;text-align:center;font-size:8px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase}
+.combo{position:relative}
+.sug{position:absolute;z-index:30;inset-inline:0;top:100%;margin:4px 0 0;padding:4px;list-style:none;background:#fff;color:var(--navy);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.35);max-height:320px;overflow-y:auto;-webkit-overflow-scrolling:touch;text-align:start}
+.sug li{padding:10px 12px;border-radius:8px;cursor:pointer;font-size:15px;line-height:1.3;min-height:44px;display:flex;flex-wrap:wrap;align-items:baseline;align-content:center;column-gap:6px;-webkit-tap-highlight-color:transparent}
+.sug li small{color:var(--muted);font-size:12.5px}
+.sug li[aria-selected=true],.sug li:hover{background:var(--fill)}
+.sug li.none{color:var(--muted);cursor:default;font-size:14px}
+input.ok{border-color:var(--gold)}
+.fld{position:relative}
+.fld input{padding-inline-end:40px}
+.chev{position:absolute;top:0;bottom:0;inset-inline-end:0;width:42px;padding:0;border-radius:0 10px 10px 0;background:transparent;color:var(--gold);display:flex;align-items:center;justify-content:center}
+[dir=rtl] .chev{border-radius:10px 0 0 10px}
+.sug{overscroll-behavior:contain;width:auto;max-width:100%}
+.sug li span{overflow-wrap:anywhere}
+@media screen and (max-width:520px){.grid{grid-template-columns:1fr}.panel{margin:10px;padding:18px 16px}input,select{font-size:16px;padding:12px}.btns button{flex:1 1 100%;padding:14px 18px;font-size:16px}.sug{max-height:50vh}.sug li{font-size:16px;min-height:48px}}
 @media print{
   body{background:#fff} .panel{display:none} .sheet{box-shadow:none;margin:0}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
-@media screen and (max-width:760px){.grid{grid-template-columns:1fr 1fr}.sheet{width:100%;min-height:auto;padding:16px}.sheet table th:nth-child(n+7),.sheet table td:nth-child(n+7){display:none}.sheet td.t{white-space:nowrap}.sheet td:nth-child(2){white-space:nowrap}.sheet h2{font-size:26px;padding-inline-end:52px}.sheet .moon{width:40px;height:40px;top:16px;inset-inline-end:16px}.sheet th,.sheet td{padding-left:3px;padding-right:3px}}
+@media screen and (min-width:521px) and (max-width:760px){.grid{grid-template-columns:1fr 1fr}}
+@media screen and (max-width:760px){.sheet{width:100%;min-height:auto;padding:16px}.sheet table th:nth-child(n+7),.sheet table td:nth-child(n+7){display:none}.sheet td.t{white-space:nowrap}.sheet td:nth-child(2){white-space:nowrap}.sheet h2{font-size:26px;padding-inline-end:52px}.sheet .moon{width:40px;height:40px;top:16px;inset-inline-end:16px}.sheet .foot{position:static;margin-top:14px}.sheet .kick{padding-inline-end:52px}.sheet th,.sheet td{padding-left:3px;padding-right:3px}}
 </style>
 <style id="pagesize">@page{size:letter;margin:0}</style>
 </head>
@@ -50,8 +65,8 @@ tr.ten td{background:var(--fill)}
   <p data-t="intro">Enter your city and country. The Sahur and Iftar times for all of Ramadan are filled in automatically. Then print or save as PDF.</p>
   <div class="grid">
     <div><label data-t="lang">Language</label><select id="lang"></select></div>
-    <div><label data-t="city">City</label><input id="city" placeholder="Berlin"></div>
-    <div><label data-t="country">Country</label><input id="country" placeholder="Germany"></div>
+    <div class="combo"><label data-t="country" for="country">Country</label><div class="fld"><input id="country" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="countrylist"><button type="button" class="chev" id="cchev" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 20 20" width="16" height="16"><path d="M5 7.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div><ul id="countrylist" class="sug" role="listbox" hidden></ul></div>
+    <div class="combo"><label data-t="city" for="city">City</label><input id="city" type="text" autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="citylist"><ul id="citylist" class="sug" role="listbox" hidden></ul></div>
     <div><label data-t="method">Calculation method</label><select id="method"></select></div>
     <div><label data-t="sahur">Sahur ends at</label><select id="sahur"><option value="Fajr" data-t="fajr">Fajr</option><option value="Imsak" data-t="imsak">Imsak (≈10 min before Fajr)</option></select></div>
     <div><label data-t="start">Start of Ramadan</label><select id="adj"><option value="-1" data-t="adjm">1 day earlier</option><option value="0" selected data-t="adj0">As calculated</option><option value="1" data-t="adjp">1 day later</option></select></div>
@@ -67,28 +82,29 @@ tr.ten td{background:var(--fill)}
 const METHODS = [[3,"Muslim World League"],[2,"ISNA (North America)"],[13,"Diyanet (Turkey)"],[4,"Umm al-Qura (Makkah)"],[5,"Egyptian General Authority"],[1,"Karachi (Univ. of Islamic Sciences)"],
  [12,"UOIF (France)"],[20,"Kemenag (Indonesia)"],[17,"JAKIM (Malaysia)"],[11,"MUIS (Singapore)"],[16,"Dubai"],[8,"Gulf Region"],[9,"Kuwait"],[10,"Qatar"],[21,"Morocco"],[19,"Algeria"],[18,"Tunisia"],
  [23,"Jordan"],[14,"Russia"],[22,"Lisbon"],[15,"Moonsighting Committee"],[7,"Tehran"]];
-const BYCOUNTRY = {"united states":2,"usa":2,"us":2,"canada":2,"turkey":13,"türkiye":13,"turkiye":13,"saudi arabia":4,"egypt":5,"pakistan":1,"india":1,"bangladesh":1,"afghanistan":1,
- "france":12,"indonesia":20,"malaysia":17,"singapore":11,"united arab emirates":16,"uae":16,"qatar":10,"kuwait":9,"morocco":21,"algeria":19,"tunisia":18,"jordan":23,"russia":14,"portugal":22,"iran":7};
+// ISO 3166-1 alpha-2 codes with English fallback names (used only if Intl.DisplayNames is unavailable)
+const CC = "AD:Andorra|AE:United Arab Emirates|AF:Afghanistan|AG:Antigua & Barbuda|AI:Anguilla|AL:Albania|AM:Armenia|AO:Angola|AQ:Antarctica|AR:Argentina|AS:American Samoa|AT:Austria|AU:Australia|AW:Aruba|AX:Åland Islands|AZ:Azerbaijan|BA:Bosnia & Herzegovina|BB:Barbados|BD:Bangladesh|BE:Belgium|BF:Burkina Faso|BG:Bulgaria|BH:Bahrain|BI:Burundi|BJ:Benin|BL:St. Barthélemy|BM:Bermuda|BN:Brunei|BO:Bolivia|BQ:Caribbean Netherlands|BR:Brazil|BS:Bahamas|BT:Bhutan|BV:Bouvet Island|BW:Botswana|BY:Belarus|BZ:Belize|CA:Canada|CC:Cocos (Keeling) Islands|CD:Congo - Kinshasa|CF:Central African Republic|CG:Congo - Brazzaville|CH:Switzerland|CI:Côte d’Ivoire|CK:Cook Islands|CL:Chile|CM:Cameroon|CN:China|CO:Colombia|CR:Costa Rica|CU:Cuba|CV:Cape Verde|CW:Curaçao|CX:Christmas Island|CY:Cyprus|CZ:Czechia|DE:Germany|DJ:Djibouti|DK:Denmark|DM:Dominica|DO:Dominican Republic|DZ:Algeria|EC:Ecuador|EE:Estonia|EG:Egypt|EH:Western Sahara|ER:Eritrea|ES:Spain|ET:Ethiopia|FI:Finland|FJ:Fiji|FK:Falkland Islands|FM:Micronesia|FO:Faroe Islands|FR:France|GA:Gabon|GB:United Kingdom|GD:Grenada|GE:Georgia|GF:French Guiana|GG:Guernsey|GH:Ghana|GI:Gibraltar|GL:Greenland|GM:Gambia|GN:Guinea|GP:Guadeloupe|GQ:Equatorial Guinea|GR:Greece|GS:South Georgia & South Sandwich Islands|GT:Guatemala|GU:Guam|GW:Guinea-Bissau|GY:Guyana|HK:Hong Kong SAR China|HM:Heard & McDonald Islands|HN:Honduras|HR:Croatia|HT:Haiti|HU:Hungary|ID:Indonesia|IE:Ireland|IL:Israel|IM:Isle of Man|IN:India|IO:British Indian Ocean Territory|IQ:Iraq|IR:Iran|IS:Iceland|IT:Italy|JE:Jersey|JM:Jamaica|JO:Jordan|JP:Japan|KE:Kenya|KG:Kyrgyzstan|KH:Cambodia|KI:Kiribati|KM:Comoros|KN:St. Kitts & Nevis|KP:North Korea|KR:South Korea|KW:Kuwait|KY:Cayman Islands|KZ:Kazakhstan|LA:Laos|LB:Lebanon|LC:St. Lucia|LI:Liechtenstein|LK:Sri Lanka|LR:Liberia|LS:Lesotho|LT:Lithuania|LU:Luxembourg|LV:Latvia|LY:Libya|MA:Morocco|MC:Monaco|MD:Moldova|ME:Montenegro|MF:St. Martin|MG:Madagascar|MH:Marshall Islands|MK:North Macedonia|ML:Mali|MM:Myanmar (Burma)|MN:Mongolia|MO:Macao SAR China|MP:Northern Mariana Islands|MQ:Martinique|MR:Mauritania|MS:Montserrat|MT:Malta|MU:Mauritius|MV:Maldives|MW:Malawi|MX:Mexico|MY:Malaysia|MZ:Mozambique|NA:Namibia|NC:New Caledonia|NE:Niger|NF:Norfolk Island|NG:Nigeria|NI:Nicaragua|NL:Netherlands|NO:Norway|NP:Nepal|NR:Nauru|NU:Niue|NZ:New Zealand|OM:Oman|PA:Panama|PE:Peru|PF:French Polynesia|PG:Papua New Guinea|PH:Philippines|PK:Pakistan|PL:Poland|PM:St. Pierre & Miquelon|PN:Pitcairn Islands|PR:Puerto Rico|PS:Palestinian Territories|PT:Portugal|PW:Palau|PY:Paraguay|QA:Qatar|RE:Réunion|RO:Romania|RS:Serbia|RU:Russia|RW:Rwanda|SA:Saudi Arabia|SB:Solomon Islands|SC:Seychelles|SD:Sudan|SE:Sweden|SG:Singapore|SH:St. Helena|SI:Slovenia|SJ:Svalbard & Jan Mayen|SK:Slovakia|SL:Sierra Leone|SM:San Marino|SN:Senegal|SO:Somalia|SR:Suriname|SS:South Sudan|ST:São Tomé & Príncipe|SV:El Salvador|SX:Sint Maarten|SY:Syria|SZ:Eswatini|TC:Turks & Caicos Islands|TD:Chad|TF:French Southern Territories|TG:Togo|TH:Thailand|TJ:Tajikistan|TK:Tokelau|TL:Timor-Leste|TM:Turkmenistan|TN:Tunisia|TO:Tonga|TR:Türkiye|TT:Trinidad & Tobago|TV:Tuvalu|TW:Taiwan|TZ:Tanzania|UA:Ukraine|UG:Uganda|UM:U.S. Outlying Islands|US:United States|UY:Uruguay|UZ:Uzbekistan|VA:Vatican City|VC:St. Vincent & Grenadines|VE:Venezuela|VG:British Virgin Islands|VI:U.S. Virgin Islands|VN:Vietnam|VU:Vanuatu|WF:Wallis & Futuna|WS:Samoa|XK:Kosovo|YE:Yemen|YT:Mayotte|ZA:South Africa|ZM:Zambia|ZW:Zimbabwe".split("|").map(x => x.split(":"));
+const BYCOUNTRY = {US:2,CA:2,TR:13,SA:4,EG:5,PK:1,IN:1,BD:1,AF:1,FR:12,ID:20,MY:17,SG:11,AE:16,QA:10,KW:9,BH:8,OM:8,MA:21,DZ:19,TN:18,JO:23,RU:14,PT:22,IR:7};
 const L = {
- en:{title:"Your Ramadan 2027 timetable",intro:"Enter your city and country. The Sahur and Iftar times for all of Ramadan are filled in automatically. Then print or save as PDF.",lang:"Language",city:"City",country:"Country",method:"Calculation method",sahur:"Sahur ends at",fajr:"Fajr",imsak:"Imsak (≈10 min before Fajr)",start:"Start of Ramadan",adjm:"1 day earlier",adj0:"As calculated",adjp:"1 day later",fmt:"Time format",paper:"Paper",create:"Create my timetable",print:"Print / save as PDF",loading:"Loading times…",err:"Sorry, the times could not be loaded. Please check the city and country spelling and your internet connection.",need:"Please enter a city and a country.",
+ en:{cph:"Search country…",tph:"Start typing your city…",none:"No matching place found – you can also just type your city.",off:"No internet connection. The times are loaded online – please connect and try again.",needc:"Please enter your city (and pick it from the list or choose a country).",title:"Your Ramadan 2027 timetable",intro:"Enter your city and country. The Sahur and Iftar times for all of Ramadan are filled in automatically. Then print or save as PDF.",lang:"Language",city:"City",country:"Country",method:"Calculation method",sahur:"Sahur ends at",fajr:"Fajr",imsak:"Imsak (≈10 min before Fajr)",start:"Start of Ramadan",adjm:"1 day earlier",adj0:"As calculated",adjp:"1 day later",fmt:"Time format",paper:"Paper",create:"Create my timetable",print:"Print / save as PDF",loading:"Loading times…",err:"Sorry, the times could not be loaded. Please check the city and country spelling and your internet connection.",need:"Please enter a city and a country.",
    h:"My Ramadan timetable",k:"Ramadan 2027 · 1448 AH · Sahur & Iftar",day:"Day",date:"Date",wd:"Weekday",se:"Sahur ends",if:"Iftar",fa:"Fasted",host:"We host for iftar",inv:"Invited to iftar at",d30:"Day 30 – only if Ramadan completes 30 days, otherwise Eid al-Fitr",
    note:"Times: AlAdhan.com (Islamic Network), method: {m}. Calculated times can differ by a few minutes from your local mosque. Please follow your mosque or community, especially for the start of Ramadan and Eid.",ten:"Highlighted: the last ten nights"},
- de:{title:"Dein Ramadan-Zeitplan 2027",intro:"Gib deine Stadt und dein Land ein. Die Sahur- und Iftar-Zeiten für den ganzen Ramadan werden automatisch eingetragen. Danach drucken oder als PDF speichern.",lang:"Sprache",city:"Stadt",country:"Land",method:"Berechnungsmethode",sahur:"Sahur endet um",fajr:"Fadschr",imsak:"Imsak (≈10 Min. vor Fadschr)",start:"Ramadan-Beginn",adjm:"1 Tag früher",adj0:"Wie berechnet",adjp:"1 Tag später",fmt:"Zeitformat",paper:"Papier",create:"Zeitplan erstellen",print:"Drucken / als PDF speichern",loading:"Zeiten werden geladen …",err:"Die Zeiten konnten nicht geladen werden. Bitte prüfe die Schreibweise von Stadt und Land und deine Internetverbindung.",need:"Bitte Stadt und Land eingeben.",
+ de:{cph:"Land suchen …",tph:"Stadt eintippen …",none:"Kein passender Ort gefunden – du kannst die Stadt auch einfach eintippen.",off:"Keine Internetverbindung. Die Zeiten werden online geladen – bitte verbinde dich und versuche es erneut.",needc:"Bitte gib deine Stadt ein (und wähle sie aus der Liste oder wähle ein Land).",title:"Dein Ramadan-Zeitplan 2027",intro:"Gib deine Stadt und dein Land ein. Die Sahur- und Iftar-Zeiten für den ganzen Ramadan werden automatisch eingetragen. Danach drucken oder als PDF speichern.",lang:"Sprache",city:"Stadt",country:"Land",method:"Berechnungsmethode",sahur:"Sahur endet um",fajr:"Fadschr",imsak:"Imsak (≈10 Min. vor Fadschr)",start:"Ramadan-Beginn",adjm:"1 Tag früher",adj0:"Wie berechnet",adjp:"1 Tag später",fmt:"Zeitformat",paper:"Papier",create:"Zeitplan erstellen",print:"Drucken / als PDF speichern",loading:"Zeiten werden geladen …",err:"Die Zeiten konnten nicht geladen werden. Bitte prüfe die Schreibweise von Stadt und Land und deine Internetverbindung.",need:"Bitte Stadt und Land eingeben.",
    h:"Mein Ramadan-Zeitplan",k:"Ramadan 2027 · 1448 n. H. · Sahur & Iftar",day:"Tag",date:"Datum",wd:"Wochentag",se:"Sahur endet",if:"Iftar",fa:"Gefastet",host:"Wir laden zum Iftar ein",inv:"Eingeladen zum Iftar bei",d30:"Tag 30 – nur wenn der Ramadan 30 Tage hat, sonst Ramadanfest",
    note:"Zeiten: AlAdhan.com (Islamic Network), Methode: {m}. Berechnete Zeiten können um einige Minuten von deiner Moschee abweichen. Richte dich nach deiner Moschee oder Gemeinde, besonders beim Beginn des Ramadan und beim Fest.",ten:"Markiert: die letzten zehn Nächte"},
- tr:{title:"2027 Ramazan imsakiyen",intro:"Şehrini ve ülkeni yaz. Ramazan boyunca sahur ve iftar vakitleri otomatik doldurulur. Sonra yazdır veya PDF olarak kaydet.",lang:"Dil",city:"Şehir",country:"Ülke",method:"Hesaplama yöntemi",sahur:"Sahur bitişi",fajr:"Sabah (imsak)",imsak:"İhtiyatlı imsak (≈10 dk önce)",start:"Ramazan başlangıcı",adjm:"1 gün önce",adj0:"Hesaplandığı gibi",adjp:"1 gün sonra",fmt:"Saat biçimi",paper:"Kâğıt",create:"İmsakiyemi oluştur",print:"Yazdır / PDF kaydet",loading:"Vakitler yükleniyor…",err:"Vakitler yüklenemedi. Lütfen şehir ve ülke yazımını ve internet bağlantını kontrol et.",need:"Lütfen şehir ve ülke gir.",
+ tr:{cph:"Ülke ara…",tph:"Şehrini yazmaya başla…",none:"Eşleşen yer bulunamadı – şehrini doğrudan da yazabilirsin.",off:"İnternet bağlantısı yok. Vakitler çevrimiçi yüklenir – lütfen bağlanıp tekrar dene.",needc:"Lütfen şehrini yaz (listeden seç ya da bir ülke seç).",title:"2027 Ramazan imsakiyen",intro:"Şehrini ve ülkeni yaz. Ramazan boyunca sahur ve iftar vakitleri otomatik doldurulur. Sonra yazdır veya PDF olarak kaydet.",lang:"Dil",city:"Şehir",country:"Ülke",method:"Hesaplama yöntemi",sahur:"Sahur bitişi",fajr:"Sabah (imsak)",imsak:"İhtiyatlı imsak (≈10 dk önce)",start:"Ramazan başlangıcı",adjm:"1 gün önce",adj0:"Hesaplandığı gibi",adjp:"1 gün sonra",fmt:"Saat biçimi",paper:"Kâğıt",create:"İmsakiyemi oluştur",print:"Yazdır / PDF kaydet",loading:"Vakitler yükleniyor…",err:"Vakitler yüklenemedi. Lütfen şehir ve ülke yazımını ve internet bağlantını kontrol et.",need:"Lütfen şehir ve ülke gir.",
    h:"Ramazan imsakiyem",k:"Ramazan 2027 · 1448 H. · Sahur & İftar",day:"Gün",date:"Tarih",wd:"Gün adı",se:"İmsak",if:"İftar",fa:"Oruç",host:"Bizim iftar misafirlerimiz",inv:"İftara davetliyiz",d30:"30. gün – yalnızca Ramazan 30 gün sürerse, aksi halde bayram",
    note:"Vakitler: AlAdhan.com (Islamic Network), yöntem: {m}. Hesaplanan vakitler caminizden birkaç dakika farklı olabilir. Özellikle Ramazan'ın başlangıcı ve bayram için caminize veya cemaatinize uyun.",ten:"İşaretli: son on gece"},
- ar:{title:"جدول رمضان 2027 الخاص بك",intro:"اكتب مدينتك وبلدك، وستُملأ أوقات السحور والإفطار لكل رمضان تلقائيًا. ثم اطبع أو احفظ كملف PDF.",lang:"اللغة",city:"المدينة",country:"البلد",method:"طريقة الحساب",sahur:"نهاية السحور",fajr:"الفجر",imsak:"الإمساك (قبل الفجر بنحو 10 دقائق)",start:"بداية رمضان",adjm:"قبل يوم",adj0:"كما هو محسوب",adjp:"بعد يوم",fmt:"صيغة الوقت",paper:"الورق",create:"أنشئ جدولي",print:"اطبع / احفظ PDF",loading:"جارٍ تحميل الأوقات…",err:"تعذر تحميل الأوقات. تحقق من كتابة المدينة والبلد ومن اتصال الإنترنت.",need:"يرجى إدخال المدينة والبلد.",
+ ar:{cph:"ابحث عن البلد…",tph:"ابدأ بكتابة اسم مدينتك…",none:"لم يُعثر على مكان مطابق – يمكنك أيضًا كتابة اسم مدينتك فقط.",off:"لا يوجد اتصال بالإنترنت. يتم تحميل الأوقات عبر الإنترنت – يرجى الاتصال والمحاولة مرة أخرى.",needc:"يرجى إدخال مدينتك (واخترها من القائمة أو اختر البلد).",title:"جدول رمضان 2027 الخاص بك",intro:"اكتب مدينتك وبلدك، وستُملأ أوقات السحور والإفطار لكل رمضان تلقائيًا. ثم اطبع أو احفظ كملف PDF.",lang:"اللغة",city:"المدينة",country:"البلد",method:"طريقة الحساب",sahur:"نهاية السحور",fajr:"الفجر",imsak:"الإمساك (قبل الفجر بنحو 10 دقائق)",start:"بداية رمضان",adjm:"قبل يوم",adj0:"كما هو محسوب",adjp:"بعد يوم",fmt:"صيغة الوقت",paper:"الورق",create:"أنشئ جدولي",print:"اطبع / احفظ PDF",loading:"جارٍ تحميل الأوقات…",err:"تعذر تحميل الأوقات. تحقق من كتابة المدينة والبلد ومن اتصال الإنترنت.",need:"يرجى إدخال المدينة والبلد.",
    h:"جدول رمضان الخاص بي",k:"رمضان 2027 · 1448 هـ · السحور والإفطار",day:"اليوم",date:"التاريخ",wd:"يوم الأسبوع",se:"نهاية السحور",if:"الإفطار",fa:"صمت",host:"نستضيف على الإفطار",inv:"مدعوون للإفطار عند",d30:"اليوم 30 – فقط إذا اكتمل رمضان ثلاثين يومًا، وإلا فهو عيد الفطر",
    note:"الأوقات من AlAdhan.com (Islamic Network)، الطريقة: {m}. قد تختلف الأوقات المحسوبة ببضع دقائق عن مسجدك. اتبع مسجدك أو جاليتك، خاصة في بداية رمضان والعيد.",ten:"المظلل: العشر الأواخر"},
- fr:{title:"Votre calendrier du Ramadan 2027",intro:"Saisissez votre ville et votre pays. Les horaires du suhour et de l'iftar pour tout le Ramadan sont remplis automatiquement. Ensuite, imprimez ou enregistrez en PDF.",lang:"Langue",city:"Ville",country:"Pays",method:"Méthode de calcul",sahur:"Fin du suhour",fajr:"Fajr",imsak:"Imsak (≈10 min avant le Fajr)",start:"Début du Ramadan",adjm:"1 jour plus tôt",adj0:"Selon le calcul",adjp:"1 jour plus tard",fmt:"Format de l'heure",paper:"Papier",create:"Créer mon calendrier",print:"Imprimer / enregistrer en PDF",loading:"Chargement des horaires…",err:"Les horaires n'ont pas pu être chargés. Vérifiez l'orthographe de la ville et du pays ainsi que votre connexion internet.",need:"Veuillez saisir une ville et un pays.",
+ fr:{cph:"Rechercher un pays…",tph:"Commencez à taper votre ville…",none:"Aucun lieu correspondant – vous pouvez aussi simplement saisir votre ville.",off:"Pas de connexion internet. Les horaires sont chargés en ligne – connectez-vous et réessayez.",needc:"Veuillez saisir votre ville (et la choisir dans la liste ou choisir un pays).",title:"Votre calendrier du Ramadan 2027",intro:"Saisissez votre ville et votre pays. Les horaires du suhour et de l'iftar pour tout le Ramadan sont remplis automatiquement. Ensuite, imprimez ou enregistrez en PDF.",lang:"Langue",city:"Ville",country:"Pays",method:"Méthode de calcul",sahur:"Fin du suhour",fajr:"Fajr",imsak:"Imsak (≈10 min avant le Fajr)",start:"Début du Ramadan",adjm:"1 jour plus tôt",adj0:"Selon le calcul",adjp:"1 jour plus tard",fmt:"Format de l'heure",paper:"Papier",create:"Créer mon calendrier",print:"Imprimer / enregistrer en PDF",loading:"Chargement des horaires…",err:"Les horaires n'ont pas pu être chargés. Vérifiez l'orthographe de la ville et du pays ainsi que votre connexion internet.",need:"Veuillez saisir une ville et un pays.",
    h:"Mon calendrier du Ramadan",k:"Ramadan 2027 · 1448 H · Suhour & Iftar",day:"Jour",date:"Date",wd:"Jour",se:"Fin du suhour",if:"Iftar",fa:"Jeûné",host:"Nous recevons pour l'iftar",inv:"Invités à l'iftar chez",d30:"Jour 30 – uniquement si le Ramadan compte 30 jours, sinon Aïd al-Fitr",
    note:"Horaires : AlAdhan.com (Islamic Network), méthode : {m}. Les horaires calculés peuvent différer de quelques minutes de votre mosquée. Suivez votre mosquée ou communauté, surtout pour le début du Ramadan et l'Aïd.",ten:"En surbrillance : les dix dernières nuits"},
- ur:{title:"آپ کا رمضان 2027 ٹائم ٹیبل",intro:"اپنا شہر اور ملک لکھیں۔ پورے رمضان کے سحری اور افطار کے اوقات خود بخود درج ہو جائیں گے۔ پھر پرنٹ کریں یا پی ڈی ایف محفوظ کریں۔",lang:"زبان",city:"شہر",country:"ملک",method:"طریقۂ حساب",sahur:"سحری کا اختتام",fajr:"فجر",imsak:"امساک (فجر سے تقریباً 10 منٹ پہلے)",start:"رمضان کا آغاز",adjm:"ایک دن پہلے",adj0:"حساب کے مطابق",adjp:"ایک دن بعد",fmt:"وقت کا انداز",paper:"کاغذ",create:"میرا ٹائم ٹیبل بنائیں",print:"پرنٹ / پی ڈی ایف",loading:"اوقات لوڈ ہو رہے ہیں…",err:"اوقات لوڈ نہیں ہو سکے۔ شہر اور ملک کے ہجے اور انٹرنیٹ کنکشن چیک کریں۔",need:"براہ کرم شہر اور ملک درج کریں۔",
+ ur:{cph:"ملک تلاش کریں…",tph:"اپنے شہر کا نام لکھنا شروع کریں…",none:"کوئی مماثل جگہ نہیں ملی – آپ اپنا شہر صرف لکھ بھی سکتے ہیں۔",off:"انٹرنیٹ کنکشن نہیں ہے۔ اوقات آن لائن لوڈ ہوتے ہیں – براہِ کرم کنکشن جوڑ کر دوبارہ کوشش کریں۔",needc:"براہِ کرم اپنا شہر لکھیں (اور فہرست سے منتخب کریں یا ملک چنیں)۔",title:"آپ کا رمضان 2027 ٹائم ٹیبل",intro:"اپنا شہر اور ملک لکھیں۔ پورے رمضان کے سحری اور افطار کے اوقات خود بخود درج ہو جائیں گے۔ پھر پرنٹ کریں یا پی ڈی ایف محفوظ کریں۔",lang:"زبان",city:"شہر",country:"ملک",method:"طریقۂ حساب",sahur:"سحری کا اختتام",fajr:"فجر",imsak:"امساک (فجر سے تقریباً 10 منٹ پہلے)",start:"رمضان کا آغاز",adjm:"ایک دن پہلے",adj0:"حساب کے مطابق",adjp:"ایک دن بعد",fmt:"وقت کا انداز",paper:"کاغذ",create:"میرا ٹائم ٹیبل بنائیں",print:"پرنٹ / پی ڈی ایف",loading:"اوقات لوڈ ہو رہے ہیں…",err:"اوقات لوڈ نہیں ہو سکے۔ شہر اور ملک کے ہجے اور انٹرنیٹ کنکشن چیک کریں۔",need:"براہ کرم شہر اور ملک درج کریں۔",
    h:"میرا رمضان ٹائم ٹیبل",k:"رمضان 2027 · 1448 ہجری · سحری و افطار",day:"روزہ",date:"تاریخ",wd:"دن",se:"سحری کا اختتام",if:"افطار",fa:"روزہ رکھا",host:"ہماری افطاری کے مہمان",inv:"افطاری کی دعوت پر",d30:"تیسواں روزہ – صرف اگر رمضان 30 دن کا ہو، ورنہ عید الفطر",
    note:"اوقات: AlAdhan.com (Islamic Network)، طریقہ: {m}۔ حساب شدہ اوقات آپ کی مسجد سے چند منٹ مختلف ہو سکتے ہیں۔ خاص طور پر رمضان کے آغاز اور عید کے لیے اپنی مسجد یا جماعت کی پیروی کریں۔",ten:"نمایاں: آخری عشرہ"},
- id:{title:"Jadwal Ramadan 2027 Anda",intro:"Masukkan kota dan negara Anda. Waktu sahur dan buka puasa untuk seluruh Ramadan terisi otomatis. Lalu cetak atau simpan sebagai PDF.",lang:"Bahasa",city:"Kota",country:"Negara",method:"Metode perhitungan",sahur:"Akhir sahur",fajr:"Subuh",imsak:"Imsak (≈10 menit sebelum Subuh)",start:"Awal Ramadan",adjm:"1 hari lebih awal",adj0:"Sesuai perhitungan",adjp:"1 hari lebih lambat",fmt:"Format waktu",paper:"Kertas",create:"Buat jadwal saya",print:"Cetak / simpan PDF",loading:"Memuat jadwal…",err:"Jadwal tidak dapat dimuat. Periksa ejaan kota dan negara serta koneksi internet Anda.",need:"Silakan masukkan kota dan negara.",
+ id:{cph:"Cari negara…",tph:"Mulai ketik kota Anda…",none:"Tidak ada tempat yang cocok – Anda juga bisa langsung mengetik kota Anda.",off:"Tidak ada koneksi internet. Jadwal dimuat secara online – silakan sambungkan lalu coba lagi.",needc:"Silakan masukkan kota Anda (pilih dari daftar atau pilih negara).",title:"Jadwal Ramadan 2027 Anda",intro:"Masukkan kota dan negara Anda. Waktu sahur dan buka puasa untuk seluruh Ramadan terisi otomatis. Lalu cetak atau simpan sebagai PDF.",lang:"Bahasa",city:"Kota",country:"Negara",method:"Metode perhitungan",sahur:"Akhir sahur",fajr:"Subuh",imsak:"Imsak (≈10 menit sebelum Subuh)",start:"Awal Ramadan",adjm:"1 hari lebih awal",adj0:"Sesuai perhitungan",adjp:"1 hari lebih lambat",fmt:"Format waktu",paper:"Kertas",create:"Buat jadwal saya",print:"Cetak / simpan PDF",loading:"Memuat jadwal…",err:"Jadwal tidak dapat dimuat. Periksa ejaan kota dan negara serta koneksi internet Anda.",need:"Silakan masukkan kota dan negara.",
    h:"Jadwal Ramadan saya",k:"Ramadan 2027 · 1448 H · Sahur & Buka Puasa",day:"Hari",date:"Tanggal",wd:"Hari",se:"Imsak",if:"Buka puasa",fa:"Puasa",host:"Kami mengundang buka puasa",inv:"Diundang buka puasa di",d30:"Hari ke-30 – hanya jika Ramadan genap 30 hari, jika tidak Idul Fitri",
    note:"Waktu: AlAdhan.com (Islamic Network), metode: {m}. Waktu hasil perhitungan bisa berbeda beberapa menit dari masjid setempat. Ikuti masjid atau komunitas Anda, terutama untuk awal Ramadan dan Idul Fitri.",ten:"Ditandai: sepuluh malam terakhir"}
 };
@@ -102,20 +118,121 @@ function load(k){ try{ return localStorage.getItem("rmd_" + k); }catch(e){ retur
 function applyLang(){
   const t = L[cur]; document.documentElement.lang = cur; document.documentElement.dir = (cur === "ar" || cur === "ur") ? "rtl" : "ltr";
   document.querySelectorAll("[data-t]").forEach(el => { if (t[el.dataset.t]) el.textContent = t[el.dataset.t]; });
+  $("country").placeholder = t.cph; $("city").placeholder = t.tph;
   store("lang", cur);
 }
+const esc = x => String(x).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fold = x => String(x).toLocaleLowerCase(LOC[cur]).normalize("NFD").replace(/[̀-ًͯ-ٰٟ]/g, "").replace(/ı/g, "i").replace(/[أإآ]/g, "ا");
+let country = "", place = null, countries = [];   // country = ISO code, place = {name, lat, lon, tz, cc}
+
+// ---------- country combobox ----------
+function cname(code, lang){
+  try{ const n = new Intl.DisplayNames([LOC[lang || cur], "en"], {type: "region", fallback: "none"}).of(code); if (n && n !== code) return n; }catch(e){}
+  const f = CC.find(c => c[0] === code); return f ? f[1] : code;
+}
+function buildCountries(){
+  countries = CC.map(([code, en]) => ({code, en, name: cname(code)}));
+  const coll = new Intl.Collator(LOC[cur]);
+  countries.sort((a, b) => coll.compare(a.name, b.name));
+  countries.forEach(c => { c.key = fold(c.name) + " " + fold(c.en) + " " + c.code.toLowerCase(); });
+  if (country) $("country").value = cname(country);
+}
+function setCountry(code, keepCity){
+  const changed = code !== country; country = code || "";
+  $("country").value = code ? cname(code) : ""; $("country").classList.toggle("ok", !!code); store("cc", country);
+  if (code && !load("methodTouched")) $("method").value = BYCOUNTRY[code] || 3;   // default: Muslim World League
+  if (changed && !keepCity && place && place.cc !== code){ place = null; $("city").value = ""; $("city").classList.remove("ok"); store("place", ""); store("city", ""); }
+}
+function combo(input, list, source, pick){
+  let items = [], act = -1;
+  const close = () => { list.hidden = true; input.setAttribute("aria-expanded", "false"); input.removeAttribute("aria-activedescendant"); act = -1; };
+  const hilite = (i, center) => { act = i; [...list.children].forEach((li, k) => li.setAttribute("aria-selected", k === i ? "true" : "false"));
+    const li = list.children[i]; if (li){ input.setAttribute("aria-activedescendant", li.id); list.scrollTop = center ? li.offsetTop - list.clientHeight / 2 + li.offsetHeight / 2 : (li.offsetTop < list.scrollTop ? li.offsetTop : (li.offsetTop + li.offsetHeight > list.scrollTop + list.clientHeight ? li.offsetTop + li.offsetHeight - list.clientHeight : list.scrollTop)); } };
+  list.addEventListener("mousedown", e => e.preventDefault());
+  document.addEventListener("pointerdown", e => { if (!list.hidden && !input.parentNode.closest(".combo").contains(e.target)) close(); }, true);
+  const show = (arr, emptyMsg) => {
+    items = arr; list.innerHTML = "";
+    if (!arr.length){ if (!emptyMsg){ close(); return; } const li = document.createElement("li"); li.className = "none"; li.textContent = emptyMsg; list.appendChild(li); }
+    arr.forEach((it, k) => { const li = document.createElement("li"); li.id = list.id + "-" + k; li.setAttribute("role", "option"); li.innerHTML = it.html;
+      li.addEventListener("mousedown", e => e.preventDefault()); li.addEventListener("click", () => { pick(it); close(); }); list.appendChild(li); });
+    list.hidden = false; input.setAttribute("aria-expanded", "true"); act = -1;
+    const cur = arr.findIndex(it => it.current); if (cur >= 0) hilite(cur, true); else list.scrollTop = 0;
+  };
+  input.addEventListener("keydown", e => {
+    if (list.hidden && (e.key === "ArrowDown")){ source(input.value, show, true); return; }
+    if (e.key === "ArrowDown"){ e.preventDefault(); if (items.length) hilite(Math.min(act + 1, items.length - 1)); }
+    else if (e.key === "ArrowUp"){ e.preventDefault(); if (items.length) hilite(Math.max(act - 1, 0)); }
+    else if (e.key === "Enter"){ if (!list.hidden && items.length){ e.preventDefault(); pick(items[act >= 0 ? act : 0]); close(); } }
+    else if (e.key === "Escape"){ close(); }
+  });
+  input.addEventListener("input", () => source(input.value, show, false));
+  input.addEventListener("focus", () => { if (input === $("country")) { input.select(); source("", show, true); } });
+  input.addEventListener("blur", () => setTimeout(close, 150));
+  return {close, open: () => { input.focus(); source(input === $("country") ? "" : input.value, show, true); }, isOpen: () => !list.hidden};
+}
+function countrySource(q, show){
+  const f = fold(q.trim());
+  let arr = countries;
+  if (f){
+    const rank = c => { const n = fold(c.name), e = fold(c.en);
+      if (n.startsWith(f) || e.startsWith(f) || c.code.toLowerCase() === f) return 0;
+      if (c.key.split(/[\s,()\-]+/).some(w => w.startsWith(f))) return 1;
+      return c.key.includes(f) ? 2 : 9; };
+    arr = countries.map(c => [rank(c), c]).filter(x => x[0] < 9).sort((x, y) => x[0] - y[0]).map(x => x[1]).slice(0, 60);
+  }
+  show(arr.map(c => ({code: c.code, current: !f && c.code === country, html: esc(c.name)})), L[cur].none);
+}
+
+// ---------- city autocomplete (Open-Meteo geocoding, free, no key) ----------
+let geoTimer = null, geoCtl = null;
+const GEOLANG = {en: "en", de: "de", tr: "tr", ar: "ar", fr: "fr", ur: "ur", id: "id"};
+function citySource(q, show){
+  place = null; $("city").classList.remove("ok"); clearTimeout(geoTimer);
+  const term = q.trim(); if (term.length < 2){ show([]); return; }
+  geoTimer = setTimeout(async () => {
+    if (geoCtl) geoCtl.abort(); geoCtl = new AbortController();
+    try{
+      let url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(term)}&count=${country ? 8 : 10}&language=${GEOLANG[cur]}&format=json`;
+      if (country) url += `&countryCode=${country}`;   // server-side filter; also filtered below
+      const r = await fetch(url, {signal: geoCtl.signal}); const j = await r.json();
+      const RTLL = cur === "ar" || cur === "ur";
+      const res = (j.results || []).filter(x => !country || x.country_code === country).filter(x => !x.feature_code || x.feature_code.startsWith("PPL"))
+        .filter((x, k, a) => a.findIndex(y => y.name === x.name && y.admin1 === x.admin1 && y.country_code === x.country_code) === k).slice(0, 8);
+      show(res.map(x => { const sub = [x.admin1 && x.admin1 !== x.name ? x.admin1 : "", country ? "" : cname(x.country_code)].filter(Boolean).join(RTLL ? "، " : ", ");
+        return {name: x.name, lat: x.latitude, lon: x.longitude, tz: x.timezone, cc: x.country_code, sub,
+                html: `<span>${esc(x.name)}${sub ? (RTLL ? "،" : ",") : ""}</span>${sub ? `<small>${esc(sub)}</small>` : ""}`}; }), L[cur].none);
+      $("msg").textContent = "";
+    }catch(e){ if (e.name !== "AbortError"){ show([]); if (!navigator.onLine) $("msg").textContent = L[cur].off; } }
+  }, 250);
+}
+function pickCity(it){
+  place = {name: it.name, lat: it.lat, lon: it.lon, tz: it.tz, cc: it.cc, sub: it.sub};
+  $("city").value = it.name; $("city").classList.add("ok"); store("place", JSON.stringify(place));
+  if (it.cc && it.cc !== country) setCountry(it.cc, true);
+}
+
 function init(){
   Object.entries(NAMES).forEach(([k, v]) => $("lang").add(new Option(v, k)));
   METHODS.forEach(([id, n]) => $("method").add(new Option(n, id)));
   const nav = (navigator.language || "en").slice(0, 2);
   cur = load("lang") || (L[nav] ? nav : "en"); $("lang").value = cur;
-  ["city", "country", "method", "sahur", "fmt", "paper", "adj"].forEach(k => { const v = load(k); if (v !== null) $(k).value = v; });
+  ["city", "method", "sahur", "fmt", "paper", "adj"].forEach(k => { const v = load(k); if (v !== null) $(k).value = v; });
+  try{ const pl = JSON.parse(load("place") || "null"); if (pl && pl.name === $("city").value){ place = pl; $("city").classList.add("ok"); } }catch(e){}
   let fmtTouched = load("fmt") !== null;
   if (!fmtTouched) $("fmt").value = cur === "en" ? "12" : "24";
   $("fmt").onchange = () => { fmtTouched = true; };
-  applyLang();
-  $("lang").onchange = () => { cur = $("lang").value; if (!fmtTouched) $("fmt").value = cur === "en" ? "12" : "24"; applyLang(); if ($("out").innerHTML) $("go").click(); };
-  $("country").onchange = () => { const m = BYCOUNTRY[$("country").value.trim().toLowerCase()]; if (m) $("method").value = m; };
+  $("method").addEventListener("change", () => store("methodTouched", "1"));
+  applyLang(); buildCountries();
+  let cc = load("cc");
+  if (cc === null){ const m = (navigator.language || "").match(/[-_]([A-Za-z]{2})\b/); cc = m ? m[1].toUpperCase() : ""; }   // preselect by browser region
+  if (cc && CC.some(c => c[0] === cc)) setCountry(cc, true);
+  const cbox = combo($("country"), $("countrylist"), countrySource, it => { setCountry(it.code); if (!place) $("city").focus(); });
+  $("cchev").addEventListener("mousedown", e => e.preventDefault());
+  $("cchev").addEventListener("click", () => { if (cbox.isOpen()) cbox.close(); else { $("country").focus(); $("country").select(); cbox.open(); } });
+  $("country").addEventListener("change", () => { const f = fold($("country").value.trim()); if (!f){ setCountry(""); return; }
+    const hit = countries.find(c => fold(c.name) === f || fold(c.en) === f); if (hit) setCountry(hit.code); else if (country) $("country").value = cname(country); });
+  combo($("city"), $("citylist"), citySource, pickCity);
+  $("lang").onchange = () => { cur = $("lang").value; if (!fmtTouched) $("fmt").value = cur === "en" ? "12" : "24"; applyLang(); buildCountries(); if ($("out").innerHTML) $("go").click(); };
   $("paper").onchange = () => { $("pagesize").textContent = `@page{size:${$("paper").value};margin:0}`; document.querySelectorAll(".sheet").forEach(s => s.classList.toggle("a4", $("paper").value === "a4")); };
   $("go").onclick = create; $("pr").onclick = () => window.print();
   $("paper").onchange();
@@ -125,15 +242,20 @@ function fmtTime(s){
   let [h, m] = hm.split(":").map(Number); const ap = h < 12 ? "AM" : "PM"; h = h % 12 || 12; return `${h}:${String(m).padStart(2, "0")} ${ap}`;
 }
 async function create(){
-  const t = L[cur], city = $("city").value.trim(), country = $("country").value.trim();
-  if (!city || !country){ $("msg").textContent = t.need; return; }
-  ["city", "country", "method", "sahur", "fmt", "paper", "adj"].forEach(k => store(k, $(k).value));
+  const t = L[cur], city = $("city").value.trim();
+  const usePlace = place && place.name === city;
+  if (!city || (!usePlace && !country)){ $("msg").textContent = city ? t.needc : t.need; return; }
+  ["city", "method", "sahur", "fmt", "paper", "adj"].forEach(k => store(k, $(k).value));
   $("msg").textContent = t.loading;
+  const adj = +$("adj").value;   // AlAdhan applies `adjustment` only with calendarMethod=MATHEMATICAL (default HJCoSA ignores it)
+  const q = `method=${$("method").value}` + (adj ? `&calendarMethod=MATHEMATICAL&adjustment=${adj}` : "");
+  const url = usePlace
+    ? `https://api.aladhan.com/v1/hijriCalendar/1448/9?latitude=${place.lat}&longitude=${place.lon}&${q}` + (place.tz ? `&timezonestring=${encodeURIComponent(place.tz)}` : "")
+    : `https://api.aladhan.com/v1/hijriCalendarByAddress/1448/9?address=${encodeURIComponent(city + ", " + cname(country, "en"))}&${q}`;
   try{
-    const url = `https://api.aladhan.com/v1/hijriCalendarByAddress/1448/9?address=${encodeURIComponent(city + ", " + country)}&method=${$("method").value}&adjustment=${$("adj").value}`;
     const r = await fetch(url); const j = await r.json(); if (j.code !== 200 || !j.data || !j.data.length) throw new Error("bad");
-    render(j.data, city, country); $("msg").textContent = "";
-  }catch(e){ $("msg").textContent = t.err; }
+    render(j.data, city, country ? cname(country) : (usePlace ? cname(place.cc) : "")); $("msg").textContent = "";
+  }catch(e){ $("msg").textContent = (!navigator.onLine || e instanceof TypeError) ? t.off : t.err; }
 }
 function render(days, city, country){
   const t = L[cur], key = $("sahur").value, mname = $("method").selectedOptions[0].text;
@@ -143,7 +265,7 @@ function render(days, city, country){
     if (d){
       const g = d.date.gregorian, dt = new Date(+g.year, g.month.number - 1, +g.day);
       const date = dt.toLocaleDateString(LOC[cur], {day: "numeric", month: "short"}), wd = dt.toLocaleDateString(LOC[cur], {weekday: "short"});
-      rows += `<tr class="${i >= 20 ? "ten" : ""}"><td class="d">${i + 1}</td><td>${date}</td><td>${wd}</td><td class="t">${fmtTime(d.timings[key])}</td><td class="t">${fmtTime(d.timings.Maghrib)}</td><td><span class="circle"></span></td><td></td><td></td></tr>`;
+      rows += `<tr class="${i >= 20 ? "ten" : ""}"><td class="d">${i + 1}${i === 29 ? "*" : ""}</td><td>${date}</td><td>${wd}</td><td class="t">${fmtTime(d.timings[key])}</td><td class="t">${fmtTime(d.timings.Maghrib)}</td><td><span class="circle"></span></td><td></td><td></td></tr>`;
     } else {
       rows += `<tr class="ten"><td class="d">30*</td><td></td><td></td><td></td><td></td><td><span class="circle"></span></td><td></td><td></td></tr>`;
     }
@@ -151,7 +273,7 @@ function render(days, city, country){
   const a4 = $("paper").value === "a4" ? "a4" : "";
   $("out").innerHTML = `<div class="sheet ${a4}">
     <svg class="moon" viewBox="0 0 100 100"><path d="M62 8a44 44 0 1 0 30 70A36 36 0 1 1 62 8z" fill="#C59B4B"/><path d="M74 23 L77 31 L85 31 L79 36 L81 44 L74 39 L67 44 L69 36 L63 31 L71 31Z" fill="#C59B4B"/></svg>
-    <div class="kick">${t.k}</div><h2>${t.h}</h2><div class="sub">${city}, ${country} · ${mname}</div>
+    <div class="kick">${t.k}</div><h2>${t.h}</h2><div class="sub">${esc(city)}${country ? ((cur === "ar" || cur === "ur") ? "، " : ", ") + esc(country) : ""} · ${esc(mname)}</div>
     <table><tr><th>${t.day}</th><th>${t.date}</th><th>${t.wd}</th><th>${t.se}</th><th>${t.if}</th><th>${t.fa}</th><th style="width:22%">${t.host}</th><th style="width:22%">${t.inv}</th></tr>${rows}</table>
     <div class="note">${t.ten} · * ${t.d30}</div><div class="note">${t.note.replace("{m}", mname)}</div>
     <div class="foot">Ramadan 2027 · MagicDigiStudio</div></div>`;
